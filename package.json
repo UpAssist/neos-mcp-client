@@ -1,0 +1,28 @@
+{
+  "name": "@upassist/neos-mcp",
+  "version": "0.1.0",
+  "description": "MCP client for Neos CMS — connects to any UpAssist.Neos.Mcp bridge",
+  "private": true,
+  "bin": {
+    "neos-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outfile=dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/index.js",
+    "dev": "node --import=tsx src/index.ts"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.27.4",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0"
+  }
+}
