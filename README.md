@@ -39,9 +39,40 @@ Use the same value in two places:
 1. **Neos server** `.env` as `NEOS_MCP_BRIDGE_TOKEN`
 2. **MCP client** config as `NEOS_MCP_TOKEN`
 
+### Claude Code (per project — recommended)
+
+Add a `.mcp.json` file to your project root. You can define multiple environments (e.g. local and production):
+
+```json
+{
+  "mcpServers": {
+    "neos-local": {
+      "command": "node",
+      "args": ["/Users/you/Tools/neos-mcp-client/dist/index.js"],
+      "env": {
+        "NEOS_MCP_URL": "http://localhost:8081",
+        "NEOS_MCP_TOKEN": "your-local-token"
+      }
+    },
+    "neos-production": {
+      "command": "node",
+      "args": ["/Users/you/Tools/neos-mcp-client/dist/index.js"],
+      "env": {
+        "NEOS_MCP_URL": "https://www.example.com",
+        "NEOS_MCP_TOKEN": "your-production-token"
+      }
+    }
+  }
+}
+```
+
+> **Important:** Add `.mcp.json` to `.gitignore` — it contains tokens.
+
+Claude Code will prompt for approval the first time it encounters the `.mcp.json`.
+
 ### Claude Code (global)
 
-Add to `~/.claude/settings.json`:
+To make the server available across all projects, add the config to `~/.claude.json`:
 
 ```json
 {
@@ -52,25 +83,6 @@ Add to `~/.claude/settings.json`:
       "env": {
         "NEOS_MCP_URL": "http://localhost:8081",
         "NEOS_MCP_TOKEN": "your-token"
-      }
-    }
-  }
-}
-```
-
-### Claude Code (per project)
-
-Override the environment variables in your project's `.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "neos-mcp": {
-      "command": "node",
-      "args": ["/Users/you/Tools/neos-mcp-client/dist/index.js"],
-      "env": {
-        "NEOS_MCP_URL": "https://staging.example.com",
-        "NEOS_MCP_TOKEN": "project-specific-token"
       }
     }
   }
