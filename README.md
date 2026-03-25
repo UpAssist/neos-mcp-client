@@ -25,7 +25,19 @@ The client needs two environment variables to connect to a Neos instance:
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `NEOS_MCP_URL` | Base URL of the Neos site | `http://localhost:8081` |
-| `NEOS_MCP_TOKEN` | Bearer token (must match `NEOS_MCP_BRIDGE_TOKEN` on the server) | `my-secret-token` |
+| `NEOS_MCP_TOKEN` | Bearer token (must match `NEOS_MCP_BRIDGE_TOKEN` on the server) | `a3f1c9...` |
+
+### Generating a token
+
+The token is a shared secret you choose yourself. Generate a secure random token with:
+
+```bash
+openssl rand -hex 32
+```
+
+Use the same value in two places:
+1. **Neos server** `.env` as `NEOS_MCP_BRIDGE_TOKEN`
+2. **MCP client** config as `NEOS_MCP_TOKEN`
 
 ### Claude Code (global)
 
