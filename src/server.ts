@@ -3,6 +3,7 @@ import { registerGetSiteContext } from './tools/getSiteContext.js';
 import { registerSetupWorkspace } from './tools/setupWorkspace.js';
 import { registerListPages } from './tools/listPages.js';
 import { registerGetPageContent } from './tools/getPageContent.js';
+import { registerGetDocumentProperties } from './tools/getDocumentProperties.js';
 import { registerListNodeTypes } from './tools/listNodeTypes.js';
 import { registerListPendingChanges } from './tools/listPendingChanges.js';
 import { registerGetPreviewUrl } from './tools/getPreviewUrl.js';
@@ -12,6 +13,7 @@ import { registerDeleteNode } from './tools/deleteNode.js';
 import { registerPublishChanges } from './tools/publishChanges.js';
 import { registerCreateDocumentNode } from './tools/createDocumentNode.js';
 import { registerMoveNode } from './tools/moveNode.js';
+import { registerRestart } from './tools/restart.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -23,6 +25,7 @@ export function createServer(): McpServer {
   registerSetupWorkspace(server);
   registerListPages(server);
   registerGetPageContent(server);
+  registerGetDocumentProperties(server);
   registerListNodeTypes(server);
   registerListPendingChanges(server);
   registerGetPreviewUrl(server);
@@ -32,6 +35,7 @@ export function createServer(): McpServer {
   registerPublishChanges(server);
   registerCreateDocumentNode(server);
   registerMoveNode(server);
+  registerRestart(server);
 
   return server;
 }
