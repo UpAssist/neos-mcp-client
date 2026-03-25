@@ -1,6 +1,6 @@
 {
   "name": "@upassist/neos-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP client for Neos CMS — connects to any UpAssist.Neos.Mcp bridge",
   "private": true,
   "bin": {
