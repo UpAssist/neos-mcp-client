@@ -14,6 +14,8 @@ import { registerPublishChanges } from './tools/publishChanges.js';
 import { registerCreateDocumentNode } from './tools/createDocumentNode.js';
 import { registerMoveNode } from './tools/moveNode.js';
 import { registerRestart } from './tools/restart.js';
+import { registerListAssets } from './tools/listAssets.js';
+import { registerListAssetTags } from './tools/listAssetTags.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -36,6 +38,8 @@ export function createServer(): McpServer {
   registerCreateDocumentNode(server);
   registerMoveNode(server);
   registerRestart(server);
+  registerListAssets(server);
+  registerListAssetTags(server);
 
   return server;
 }
