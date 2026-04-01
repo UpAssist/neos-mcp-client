@@ -1,18 +1,26 @@
-# neos-mcp-client
+# @upassist/neos-mcp
 
-MCP server that connects AI tools (Claude Code, Cursor, etc.) to Neos CMS via the [UpAssist.Neos.Mcp](https://github.com/UpAssist/neos-mcp) bridge. Translates MCP tool calls into HTTP requests so AI assistants can read, create, edit, and publish Neos content.
+**MCP server that connects AI assistants to Neos CMS.** Works with Claude Code, Cursor, and any other tool that supports the [Model Context Protocol](https://modelcontextprotocol.io).
+
+This is the client-side component. It runs locally on your machine and translates MCP tool calls into HTTP requests to the [UpAssist.Neos.Mcp](https://github.com/UpAssist/neos-mcp) bridge running inside your Neos installation.
 
 ## Requirements
 
 - Node.js 18+
-- A Neos CMS instance with [UpAssist.Neos.Mcp](https://github.com/UpAssist/neos-mcp) installed
+- A Neos CMS instance with [UpAssist.Neos.Mcp](https://github.com/UpAssist/neos-mcp) installed and configured
 
 ## Installation
 
-Clone the repository to a permanent location:
+**Via npm (recommended):**
 
 ```bash
-git clone git@github.com:UpAssist/neos-mcp-client.git ~/Tools/neos-mcp-client
+npm install -g @upassist/neos-mcp
+```
+
+**Or clone from source:**
+
+```bash
+git clone https://github.com/UpAssist/neos-mcp-client.git ~/Tools/neos-mcp-client
 cd ~/Tools/neos-mcp-client
 npm install
 npm run build
@@ -20,66 +28,34 @@ npm run build
 
 ## Configuration
 
-The client needs two environment variables to connect to a Neos instance:
+The MCP server connects to your Neos instance using two environment variables:
 
 | Variable | Description | Example |
-|----------|-------------|---------|
+| --- | --- | --- |
 | `NEOS_MCP_URL` | Base URL of the Neos site | `http://localhost:8081` |
-| `NEOS_MCP_TOKEN` | Bearer token (must match `NEOS_MCP_BRIDGE_TOKEN` on the server) | `a3f1c9...` |
+| `NEOS_MCP_TOKEN` | Bearer token (must match `NEOS_MCP_BRIDGE_TOKEN` in Neos `.env`) | `a3f1c9...` |
 
 ### Generating a token
 
-The token is a shared secret you choose yourself. Generate a secure random token with:
+Pick a secure shared secret. The same token goes in two places:
 
 ```bash
+# Generate a random token
 openssl rand -hex 32
 ```
 
-Use the same value in two places:
-1. **Neos server** `.env` as `NEOS_MCP_BRIDGE_TOKEN`
-2. **MCP client** config as `NEOS_MCP_TOKEN`
+1. **Neos side** — add to your Neos `.env` file as `NEOS_MCP_BRIDGE_TOKEN`
+2. **MCP client side** — add to your editor config as `NEOS_MCP_TOKEN` (see below)
 
-### Claude Code (per project — recommended)
+### Claude Code
 
-Add a `.mcp.json` file to your project root. You can define multiple environments (e.g. local and production):
+**Per project (recommended)** — add a `.mcp.json` to your Neos project root:
 
 ```json
 {
   "mcpServers": {
     "neos-local": {
-      "command": "node",
-      "args": ["/Users/you/Tools/neos-mcp-client/dist/index.js"],
-      "env": {
-        "NEOS_MCP_URL": "http://localhost:8081",
-        "NEOS_MCP_TOKEN": "your-local-token"
-      }
-    },
-    "neos-production": {
-      "command": "node",
-      "args": ["/Users/you/Tools/neos-mcp-client/dist/index.js"],
-      "env": {
-        "NEOS_MCP_URL": "https://www.example.com",
-        "NEOS_MCP_TOKEN": "your-production-token"
-      }
-    }
-  }
-}
-```
-
-> **Important:** Add `.mcp.json` to `.gitignore` — it contains tokens.
-
-Claude Code will prompt for approval the first time it encounters the `.mcp.json`.
-
-### Claude Code (global)
-
-To make the server available across all projects, add the config to `~/.claude.json`:
-
-```json
-{
-  "mcpServers": {
-    "neos-mcp": {
-      "command": "node",
-      "args": ["/Users/you/Tools/neos-mcp-client/dist/index.js"],
+      "command": "neos-mcp",
       "env": {
         "NEOS_MCP_URL": "http://localhost:8081",
         "NEOS_MCP_TOKEN": "your-token"
@@ -89,6 +65,33 @@ To make the server available across all projects, add the config to `~/.claude.j
 }
 ```
 
+> **Important:** Add `.mcp.json` to `.gitignore` — it contains your token.
+
+You can define multiple environments in the same file (e.g. local + production):
+
+```json
+{
+  "mcpServers": {
+    "neos-local": {
+      "command": "neos-mcp",
+      "env": {
+        "NEOS_MCP_URL": "http://localhost:8081",
+        "NEOS_MCP_TOKEN": "your-local-token"
+      }
+    },
+    "neos-production": {
+      "command": "neos-mcp",
+      "env": {
+        "NEOS_MCP_URL": "https://www.example.com",
+        "NEOS_MCP_TOKEN": "your-production-token"
+      }
+    }
+  }
+}
+```
+
+**Global (all projects)** — add the same `mcpServers` block to `~/.claude.json`.
+
 ### Cursor
 
 Add to Cursor's MCP settings (Settings > MCP Servers):
@@ -96,8 +99,7 @@ Add to Cursor's MCP settings (Settings > MCP Servers):
 ```json
 {
   "neos-mcp": {
-    "command": "node",
-    "args": ["/Users/you/Tools/neos-mcp-client/dist/index.js"],
+    "command": "neos-mcp",
     "env": {
       "NEOS_MCP_URL": "http://localhost:8081",
       "NEOS_MCP_TOKEN": "your-token"
@@ -108,75 +110,86 @@ Add to Cursor's MCP settings (Settings > MCP Servers):
 
 ## Available tools
 
-Once connected, the following MCP tools are available to the AI assistant:
+Once connected, your AI assistant can use these tools:
 
 ### Reading
 
 | Tool | Description |
-|------|-------------|
-| `neos_get_site_context` | Get full site context: site info, all node types with properties, page tree, and workflow instructions. **Call this first at the start of every session.** |
-| `neos_list_pages` | List all pages (document nodes) in a workspace |
-| `neos_get_page_content` | Get all content nodes for a specific page |
+| --- | --- |
+| `neos_get_site_context` | Get site structure, node types, and page tree. **Call this first.** |
+| `neos_list_pages` | List all pages in a workspace |
+| `neos_get_page_content` | Get all content nodes on a specific page |
+| `neos_get_document_properties` | Get page-level properties (title, SEO, etc.) |
 | `neos_list_node_types` | List available node types and their properties |
 
 ### Writing
 
 | Tool | Description |
-|------|-------------|
-| `neos_setup_workspace` | Create the MCP workspace (auto-created on first write, but can be called explicitly) |
-| `neos_update_node_property` | Update a single property on an existing node |
-| `neos_create_content_node` | Create a new content node inside a parent |
+| --- | --- |
+| `neos_setup_workspace` | Create the MCP workspace (auto-created on first write) |
+| `neos_update_node_property` | Update a property on an existing node |
+| `neos_create_content_node` | Create a new content element inside a page |
 | `neos_create_document_node` | Create a new page |
-| `neos_move_node` | Move a node to a new position |
-| `neos_delete_node` | Mark a node as removed |
+| `neos_move_node` | Move or reorder a node |
+| `neos_delete_node` | Remove a node |
 
-### Review & publish
+### Media
 
 | Tool | Description |
-|------|-------------|
-| `neos_get_preview_url` | Generate a 24-hour preview URL (no Neos login required) |
-| `neos_list_pending_changes` | List all unpublished changes in the workspace |
-| `neos_publish_changes` | Publish all pending changes from workspace to live |
+| --- | --- |
+| `neos_list_assets` | Browse images and files from the Media Manager |
+| `neos_list_asset_tags` | List available asset tags |
+
+### Review and publish
+
+| Tool | Description |
+| --- | --- |
+| `neos_get_preview_url` | Generate a 24-hour preview link (no Neos login needed) |
+| `neos_list_pending_changes` | See what has been changed |
+| `neos_publish_changes` | Publish all changes to live |
+
+### Entity management
+
+If the Neos installation exposes custom Doctrine entities (see [bridge documentation](https://github.com/UpAssist/neos-mcp#entity-crud-advanced)), these tools are also available:
+
+| Tool | Description |
+| --- | --- |
+| `neos_entity_discover` | List all exposed entities with their schemas |
+| `neos_entity_list` | List/filter entities |
+| `neos_entity_show` | Get a single entity by UUID |
+| `neos_entity_create` | Create a new entity |
+| `neos_entity_update` | Update entity properties |
+| `neos_entity_delete` | Delete an entity |
+| `neos_entity_action` | Run a named action (publish, archive, etc.) |
 
 ## How it works
 
-```
+```text
 AI Assistant (Claude Code, Cursor, etc.)
-    │
-    │  MCP protocol (stdio)
-    │
-neos-mcp-client  ◄── this package
-    │
-    │  HTTP + Bearer token
-    │
+    |
+    |  MCP protocol (stdio)
+    |
+@upassist/neos-mcp           <-- this package
+    |
+    |  HTTP + Bearer token
+    |
 UpAssist.Neos.Mcp bridge (Neos CMS)
-    │
-    │  ContentRepository API
-    │
-Neos CMS database (mcp workspace → live)
+    |
+    |  ContentRepository API
+    |
+Neos CMS database (mcp workspace -> live)
 ```
 
-1. The AI assistant communicates with this MCP server via stdio
-2. Each MCP tool call is translated into an HTTP request to the Neos bridge
-3. All write operations go to the `mcp` workspace (not directly to live)
+1. Your AI assistant communicates with this MCP server via stdio
+2. Each tool call is translated into an HTTP request to the Neos bridge
+3. All write operations go to a staging workspace (not directly to live)
 4. Changes can be previewed via generated URLs before publishing
 5. Publishing requires an explicit call — the AI never auto-publishes
-
-## Typical AI workflow
-
-```
-1. neos_get_site_context          → Understand site structure and node types
-2. neos_get_page_content          → Read current content of a page
-3. neos_update_node_property      → Make changes (text, metadata, etc.)
-4. neos_get_preview_url           → Generate preview link for human review
-5. (human reviews the preview)
-6. neos_publish_changes           → Go live after confirmation
-```
 
 ## Development
 
 ```bash
-# Run in development mode (with hot reload via tsx)
+# Run in dev mode (hot reload via tsx)
 npm run dev
 
 # Type check
@@ -191,13 +204,10 @@ npm start
 
 ### Adding a new tool
 
-1. Create a new file in `src/tools/` (e.g. `myNewTool.ts`)
-2. Export a `registerMyNewTool(server: McpServer)` function
-3. Use `server.tool()` to define the tool name, description, Zod schema, and handler
-4. Call `callBridge()` to make the HTTP request to the Neos bridge
-5. Import and call the register function in `src/server.ts`
-
-Example:
+1. Create a file in `src/tools/` (e.g. `myNewTool.ts`)
+2. Export a register function that calls `server.tool()` with name, description, Zod schema, and handler
+3. Use `callBridge()` to make the HTTP request to the Neos bridge
+4. Import and call the register function in `src/server.ts`
 
 ```typescript
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -219,17 +229,6 @@ export function registerMyNewTool(server: McpServer): void {
 }
 ```
 
-## Tech stack
-
-| Component | Technology |
-|-----------|-----------|
-| Runtime | Node.js 18+ |
-| Language | TypeScript |
-| MCP SDK | `@modelcontextprotocol/sdk` |
-| Validation | Zod |
-| Bundler | esbuild |
-| Transport | stdio (standard MCP) |
-
 ## License
 
-Proprietary
+MIT
