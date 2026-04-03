@@ -4,6 +4,15 @@
 
 This is the client-side component. It runs locally on your machine and translates MCP tool calls into HTTP requests to the [UpAssist.Neos.Mcp](https://github.com/UpAssist/neos-mcp) bridge running inside your Neos installation.
 
+## Compatibility
+
+| MCP Server version | Bridge version         | Neos CMS | Node.js |
+|-------------------|------------------------|----------|---------|
+| 2.x (`main`)       | upassist/neos-mcp 1.x or 2.x | 8.3+ / 9.0+ | 18+     |
+| 1.x (`neos-8`)     | upassist/neos-mcp 1.x | 8.3+     | 18+     |
+
+> **v2 auto-detects** the bridge API version. A single MCP server v2 works with both Neos 8 and Neos 9 bridges.
+
 ## Requirements
 
 - Node.js 18+

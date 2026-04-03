@@ -1,18 +1,24 @@
 export interface PageNode {
-  identifier: string;
-  contextPath: string;
-  path: string;
+  // v2 (Neos 9) primary identifier
+  nodeAggregateId?: string;
+  // v1 (Neos 8) identifiers
+  identifier?: string;
+  contextPath?: string;
+  // Common fields
+  path?: string;
   nodeType: string;
   name: string;
   title: string;
   hidden: boolean;
   depth: number;
+  properties?: Record<string, unknown>;
 }
 
 export interface ContentNode {
-  identifier: string;
-  contextPath: string;
-  path: string;
+  nodeAggregateId?: string;
+  identifier?: string;
+  contextPath?: string;
+  path?: string;
   nodeType: string;
   name: string;
   properties: Record<string, unknown>;
@@ -32,11 +38,14 @@ export interface NodeTypeSchema {
 }
 
 export interface PendingChange {
-  identifier: string;
-  contextPath: string;
-  path: string;
+  // v2
+  nodeAggregateId?: string;
+  // v1
+  identifier?: string;
+  contextPath?: string;
+  path?: string;
   nodeType: string;
-  changeType: 'added' | 'modified' | 'removed';
+  changeType: 'added' | 'modified' | 'removed' | 'moved';
 }
 
 export interface BridgeErrorResponse {

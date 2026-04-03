@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { callBridge } from '../bridge.js';
+import { callBridge, nodeIdParam } from '../bridge.js';
 
 export function registerCreateDocumentNode(server: McpServer): void {
   server.tool(
@@ -9,11 +9,11 @@ export function registerCreateDocumentNode(server: McpServer): void {
     'Call neos_get_site_context first to see available document NodeTypes and the page tree. ' +
     'Always writes to the mcp workspace.',
     {
-      parent_path: z.string().describe(
-        'Absolute path to the parent document node, e.g. /sites/ewijksolartechniek'
+      parent_id: z.string().describe(
+        'Parent node identifier — use nodeAggregateId (Neos 9) or path (Neos 8).'
       ),
       node_type: z.string().describe(
-        'Document node type name, e.g. UpAssist.EwijkSolarTechniek:Document.Page'
+        'Document node type name, e.g. UpAssist.Site:Document.Page'
       ),
       properties: z.record(z.unknown()).default({}).describe(
         'Property key-value pairs, e.g. { title: "About us", uriPathSegment: "about-us" }'
@@ -23,15 +23,15 @@ export function registerCreateDocumentNode(server: McpServer): void {
         'URL slug used as the node name (auto-generated from nodeType if omitted)'
       ),
       insert_before: z.string().optional().describe(
-        'contextPath of a sibling node to insert the new page before'
+        'Sibling node identifier — insert the new page before this sibling'
       ),
       insert_after: z.string().optional().describe(
-        'contextPath of a sibling node to insert the new page after'
+        'Sibling node identifier — insert the new page after this sibling'
       ),
     },
-    async ({ parent_path, node_type, properties, workspace, node_name, insert_before, insert_after }) => {
+    async ({ parent_id, node_type, properties, workspace, node_name, insert_before, insert_after }) => {
       const data = await callBridge('createDocumentNode', 'POST', {
-        parentPath: parent_path,
+        ...nodeIdParam('parentPath', parent_id),
         nodeType: node_type,
         properties,
         workspace,

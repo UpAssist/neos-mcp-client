@@ -1,36 +1,52 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { callBridge } from '../bridge.js';
+import { callBridge, getApiVersion, nodeIdParam } from '../bridge.js';
 
 export function registerMoveNode(server: McpServer): void {
   server.tool(
     'neos_move_node',
     'Reorder or reparent a page or content node. ' +
-    'Provide exactly one of insert_before, insert_after, or new_parent_path. ' +
+    'Provide exactly one of insert_before, insert_after, or new_parent_id. ' +
     'Always writes to the mcp workspace.',
     {
-      context_path: z.string().describe(
-        'contextPath of the node to move, e.g. /sites/ewijksolartechniek/about@mcp'
+      node_id: z.string().describe(
+        'Node identifier to move — use nodeAggregateId (Neos 9) or contextPath (Neos 8)'
       ),
       insert_before: z.string().optional().describe(
-        'contextPath of a sibling node — move the node to appear before this sibling'
+        'Sibling node identifier — move to appear before this sibling'
       ),
       insert_after: z.string().optional().describe(
-        'contextPath of a sibling node — move the node to appear after this sibling'
+        'Sibling node identifier — move to appear after this sibling'
       ),
-      new_parent_path: z.string().optional().describe(
-        'Absolute path of a new parent node — move the node into this parent (as last child)'
+      new_parent_id: z.string().optional().describe(
+        'New parent node identifier — move into this parent (as last child)'
       ),
       workspace: z.string().default('mcp').describe('Draft workspace name'),
     },
-    async ({ context_path, insert_before, insert_after, new_parent_path, workspace }) => {
-      const data = await callBridge('moveNode', 'POST', {
-        contextPath: context_path,
+    async ({ node_id, insert_before, insert_after, new_parent_id, workspace }) => {
+      const params: Record<string, unknown> = {
+        ...nodeIdParam('contextPath', node_id),
         insertBefore: insert_before ?? '',
         insertAfter: insert_after ?? '',
-        newParentPath: new_parent_path ?? '',
         workspace,
-      });
+      };
+
+      // Map new_parent_id to the correct bridge param name
+      if (new_parent_id) {
+        if (getApiVersion() === 2) {
+          params.newParentId = new_parent_id;
+        } else {
+          params.newParentPath = new_parent_id;
+        }
+      } else {
+        if (getApiVersion() === 2) {
+          params.newParentId = '';
+        } else {
+          params.newParentPath = '';
+        }
+      }
+
+      const data = await callBridge('moveNode', 'POST', params);
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }
   );
