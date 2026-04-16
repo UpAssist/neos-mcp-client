@@ -12,7 +12,7 @@ export function registerDeleteNode(server: McpServer): void {
     },
     async ({ node_id, workspace }) => {
       const data = await callBridge('deleteNode', 'POST', {
-        ...nodeIdParam('contextPath', node_id),
+        ...await nodeIdParam('contextPath', node_id),
         workspace,
       });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };

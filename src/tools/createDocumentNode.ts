@@ -31,7 +31,7 @@ export function registerCreateDocumentNode(server: McpServer): void {
     },
     async ({ parent_id, node_type, properties, workspace, node_name, insert_before, insert_after }) => {
       const data = await callBridge('createDocumentNode', 'POST', {
-        ...nodeIdParam('parentPath', parent_id),
+        ...await nodeIdParam('parentPath', parent_id),
         nodeType: node_type,
         properties,
         workspace,

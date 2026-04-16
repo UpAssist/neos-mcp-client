@@ -11,7 +11,7 @@ export function registerGetDocumentProperties(server: McpServer): void {
       workspace: z.string().default('mcp').describe('Workspace name. Use "live" for published content, "mcp" for staged changes.'),
     },
     async ({ node_id, workspace }) => {
-      const data = await callBridge('getDocumentProperties', 'GET', { ...nodeIdParam('nodePath', node_id), workspace });
+      const data = await callBridge('getDocumentProperties', 'GET', { ...await nodeIdParam('nodePath', node_id), workspace });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }
   );

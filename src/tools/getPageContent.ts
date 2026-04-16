@@ -11,7 +11,7 @@ export function registerGetPageContent(server: McpServer): void {
       workspace: z.string().default('mcp').describe('Workspace name'),
     },
     async ({ node_id, workspace }) => {
-      const data = await callBridge('getPageContent', 'GET', { ...nodeIdParam('nodePath', node_id), workspace });
+      const data = await callBridge('getPageContent', 'GET', { ...await nodeIdParam('nodePath', node_id), workspace });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }
   );

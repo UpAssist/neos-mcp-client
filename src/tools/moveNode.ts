@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { callBridge, getApiVersion, nodeIdParam } from '../bridge.js';
+import { callBridge, nodeIdParam } from '../bridge.js';
 
 export function registerMoveNode(server: McpServer): void {
   server.tool(
@@ -24,29 +24,13 @@ export function registerMoveNode(server: McpServer): void {
       workspace: z.string().default('mcp').describe('Draft workspace name'),
     },
     async ({ node_id, insert_before, insert_after, new_parent_id, workspace }) => {
-      const params: Record<string, unknown> = {
-        ...nodeIdParam('contextPath', node_id),
+      const data = await callBridge('moveNode', 'POST', {
+        ...await nodeIdParam('contextPath', node_id),
+        ...await nodeIdParam('newParentPath', new_parent_id ?? ''),
         insertBefore: insert_before ?? '',
         insertAfter: insert_after ?? '',
         workspace,
-      };
-
-      // Map new_parent_id to the correct bridge param name
-      if (new_parent_id) {
-        if (getApiVersion() === 2) {
-          params.newParentId = new_parent_id;
-        } else {
-          params.newParentPath = new_parent_id;
-        }
-      } else {
-        if (getApiVersion() === 2) {
-          params.newParentId = '';
-        } else {
-          params.newParentPath = '';
-        }
-      }
-
-      const data = await callBridge('moveNode', 'POST', params);
+      });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }
   );

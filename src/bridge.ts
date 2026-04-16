@@ -12,21 +12,44 @@
 const BASE_URL = (process.env.NEOS_MCP_URL ?? 'http://localhost:8081').replace(/\/$/, '');
 const TOKEN = process.env.NEOS_MCP_TOKEN ?? '';
 
-let detectedApiVersion: 1 | 2 = 1; // default to v1 (Neos 8) until detected
+let detectedApiVersion: 1 | 2 | null = null;
+let versionDetectionPromise: Promise<void> | null = null;
 
 export function setApiVersion(version: 1 | 2): void {
   detectedApiVersion = version;
 }
 
 export function getApiVersion(): 1 | 2 {
-  return detectedApiVersion;
+  return detectedApiVersion ?? 1;
+}
+
+/**
+ * Auto-detect API version by calling getSiteContext.
+ * Cached after first successful detection; concurrent callers share the same request.
+ */
+async function ensureApiVersion(): Promise<void> {
+  if (detectedApiVersion !== null) return;
+  if (versionDetectionPromise) return versionDetectionPromise;
+  versionDetectionPromise = (async () => {
+    try {
+      const data = await callBridge('getSiteContext', 'GET') as Record<string, unknown>;
+      detectedApiVersion = (data && data.apiVersion === 2) ? 2 : 1;
+    } catch {
+      detectedApiVersion = 1; // fallback to v1 on error
+    } finally {
+      versionDetectionPromise = null;
+    }
+  })();
+  return versionDetectionPromise;
 }
 
 /**
  * Build the correct bridge parameter name for a node identifier.
  * v1 (Neos 8) uses nodePath/contextPath, v2 (Neos 9) uses nodeAggregateId.
+ * Auto-detects the API version on first use if not yet known.
  */
-export function nodeIdParam(key: 'nodePath' | 'contextPath' | 'parentPath' | 'newParentPath', nodeId: string): Record<string, string> {
+export async function nodeIdParam(key: 'nodePath' | 'contextPath' | 'parentPath' | 'newParentPath', nodeId: string): Promise<Record<string, string>> {
+  await ensureApiVersion();
   if (detectedApiVersion === 2) {
     const v2Keys: Record<string, string> = {
       nodePath: 'nodeAggregateId',

@@ -16,7 +16,7 @@ export function registerUpdateNodeProperty(server: McpServer): void {
     },
     async ({ node_id, property, value, workspace }) => {
       const data = await callBridge('updateNodeProperty', 'POST', {
-        ...nodeIdParam('contextPath', node_id),
+        ...await nodeIdParam('contextPath', node_id),
         property,
         value,
         workspace,
