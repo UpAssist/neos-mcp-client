@@ -70,12 +70,17 @@ export function siblingParam(key: 'insertBefore' | 'insertAfter', siblingId: str
   return { [key]: siblingId };
 }
 
-function getHeaders(): Record<string, string> {
-  return {
+function getHeaders(body?: string): Record<string, string> {
+  const headers: Record<string, string> = {
     'Authorization': `Bearer ${TOKEN}`,
+    'X-MCP-Token': TOKEN,
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   };
+  if (body !== undefined) {
+    headers['Content-Length'] = String(Buffer.byteLength(body, 'utf8'));
+  }
+  return headers;
 }
 
 export async function callBridge(
@@ -98,7 +103,7 @@ export async function callBridge(
 
   const response = await fetch(url, {
     method,
-    headers: getHeaders(),
+    headers: getHeaders(body),
     body,
   });
 
