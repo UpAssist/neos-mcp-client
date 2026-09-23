@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://github.com/UpAssist/neos-mcp-client/compare/2.0.1...2.0.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* send X-MCP-Token and explicit Content-Length headers to bridge ([94db801](https://github.com/UpAssist/neos-mcp-client/commit/94db8017e0e8d3943dcddcf331af629ea25ff8cf))
+
 ### [2.0.1](https://github.com/UpAssist/neos-mcp-client/compare/2.0.0...2.0.1) (2026-04-16)
 
 
