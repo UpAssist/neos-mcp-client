@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/UpAssist/neos-mcp-client/compare/2.0.2...2.1.0) (2026-10-08)
+
+
+### Features
+
+* add neos_upload_asset tool ([0870e67](https://github.com/UpAssist/neos-mcp-client/commit/0870e6756da461b051fa51c50a6dea41faddead6))
+
 ### [2.0.2](https://github.com/UpAssist/neos-mcp-client/compare/2.0.1...2.0.2) (2026-09-23)
 
 

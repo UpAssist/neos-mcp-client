@@ -1,7 +1,7 @@
 {
   "name": "@upassist/neos-mcp",
-  "version": "2.0.2",
-  "description": "MCP server for Neos CMS \u2014 connects AI assistants to any UpAssist.Neos.Mcp bridge",
+  "version": "2.1.0",
+  "description": "MCP server for Neos CMS — connects AI assistants to any UpAssist.Neos.Mcp bridge",
   "license": "MIT",
   "bin": {
     "neos-mcp": "dist/index.js"
