@@ -13,6 +13,8 @@ This is the client-side component. It runs locally on your machine and translate
 
 > **v2 auto-detects** the bridge API version. A single MCP server v2 works with both Neos 8 and Neos 9 bridges.
 
+> **`neos_upload_asset`** (client 2.1+) needs a bridge with the `uploadAsset` endpoint: upassist/neos-mcp **2.1+** (Neos 9) or **1.1+** (Neos 8). Against an older bridge the other tools keep working and the upload call fails with a 404.
+
 ## Requirements
 
 - Node.js 18+
