@@ -17,6 +17,7 @@ import { registerRestart } from './tools/restart.js';
 import { registerListAssets } from './tools/listAssets.js';
 import { registerListAssetTags } from './tools/listAssetTags.js';
 import { registerEntityCrudTools } from './tools/entityCrud.js';
+import { registerUploadAsset } from './tools/uploadAsset.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -41,6 +42,7 @@ export function createServer(): McpServer {
   registerRestart(server);
   registerListAssets(server);
   registerListAssetTags(server);
+  registerUploadAsset(server);
   registerEntityCrudTools(server);
 
   return server;
