@@ -150,6 +150,24 @@ Once connected, your AI assistant can use these tools:
 | `neos_list_asset_tags` | List available asset tags |
 | `neos_upload_asset` | Upload a file (local path, URL or base64) to the Media Manager, incl. title, caption, tags and collections. Identical files are deduplicated. |
 
+#### Uploading files
+
+`neos_upload_asset` takes exactly one source:
+
+| Parameter | Description |
+| --- | --- |
+| `file_path` | Absolute path of a local file, read by this MCP server |
+| `url` | HTTP(S) URL, downloaded by this MCP server (the Neos bridge never fetches remote URLs) |
+| `base64_content` | Raw base64 content (a `data:` URI prefix is allowed); requires `filename` |
+
+Optional: `filename` (overrides the name taken from the path or URL), `title`, `caption`, `copyright_notice`, `tags`, `asset_collections` (missing tags and collections are created) and `allow_duplicate`.
+
+- The result contains the asset `identifier`, which you can pass to `neos_update_node_property` (or the create tools) for image/asset properties.
+- If a file with identical content already exists, that asset is returned with `duplicate: true` and the title, caption, tags and collections you passed are **not** applied to it. Set `allow_duplicate` to force a new asset.
+- The file travels as base64 in one request, so it is about 33% larger on the wire. The size limit is set by the bridge's PHP (`post_max_size`) and web server configuration. Large files are better added through the Media Manager.
+- Requires a bridge that has the `uploadAsset` endpoint (see the [bridge README](https://github.com/UpAssist/neos-mcp#post-neosmcpuploadasset)). It works with both the Neos 8 and the Neos 9 bridge.
+- A rejected token comes back as a bridge error `401` or `403`.
+
 ### Review and publish
 
 | Tool | Description |
@@ -205,12 +223,19 @@ npm run dev
 # Type check
 npm run typecheck
 
+# Run the unit tests
+npm test
+
 # Build for production
 npm run build
 
 # Run built version
 npm start
 ```
+
+### Tests
+
+`npm test` bundles `test/*.test.ts` with esbuild and runs them with Node's built-in test runner. The tests start the real MCP server in-process (via the SDK's in-memory transport) and replace `fetch`, so they check the exact HTTP requests sent to the bridge without needing a Neos instance. For a true end-to-end check, point `NEOS_MCP_URL` at a Neos instance with the bridge installed and call the tool through any MCP client.
 
 ### Adding a new tool
 
