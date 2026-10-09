@@ -144,6 +144,11 @@ Once connected, your AI assistant can use these tools:
 | `neos_move_node` | Move or reorder a node |
 | `neos_delete_node` | Remove a node |
 
+Property values are passed to the bridge unchanged and resolved there against the NodeType's property type:
+
+- Image/asset properties: the asset `identifier` (e.g. from `neos_list_assets` or `neos_upload_asset`).
+- Link properties (`Neos\Neos\Domain\Link\Link`, edited with the LinkEditor): a URI string such as `node://<nodeAggregateId>`, `asset://<id>` or `https://…`, or an object `{ "href": "…", "title": "…", "target": "_blank" }`. An empty string clears the link. A `node://` target must exist in the workspace, otherwise the bridge rejects the write. Needs a Neos 9 bridge with Link property support (see the [bridge README](https://github.com/UpAssist/neos-mcp#property-resolution)).
+
 ### Media
 
 | Tool | Description |

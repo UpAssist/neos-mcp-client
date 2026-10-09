@@ -11,7 +11,12 @@ export function registerUpdateNodeProperty(server: McpServer): void {
         'Node identifier — use nodeAggregateId (Neos 9) or contextPath/path (Neos 8)'
       ),
       property: z.string().describe('Property name to update'),
-      value: z.unknown().describe('New property value (string, number, boolean, or object)'),
+      value: z.unknown().describe(
+        'New property value (string, number, boolean, or object). Image/asset properties: the asset identifier. ' +
+        'Link properties (type Neos\\Neos\\Domain\\Link\\Link): a URI string such as "node://<nodeAggregateId>", "asset://<id>" or "https://…", ' +
+        'or an object { href, title?, target?, rel?, download? }; an empty string clears the link. ' +
+        'A node:// target must exist in the workspace (check with neos_list_pages), otherwise the write is rejected.'
+      ),
       workspace: z.string().default('mcp').describe('Workspace to write to'),
     },
     async ({ node_id, property, value, workspace }) => {
