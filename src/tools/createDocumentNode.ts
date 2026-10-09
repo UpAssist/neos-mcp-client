@@ -16,7 +16,8 @@ export function registerCreateDocumentNode(server: McpServer): void {
         'Document node type name, e.g. UpAssist.Site:Document.Page'
       ),
       properties: z.record(z.unknown()).default({}).describe(
-        'Property key-value pairs, e.g. { title: "About us", uriPathSegment: "about-us" }'
+        'Property key-value pairs, e.g. { title: "About us", uriPathSegment: "about-us" }. ' +
+        'Values are resolved like in neos_update_node_property (asset identifiers, link URIs or { href, … } objects).'
       ),
       workspace: z.string().default('mcp').describe('Draft workspace name'),
       node_name: z.string().optional().describe(
