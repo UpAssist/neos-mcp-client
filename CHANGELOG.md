@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/UpAssist/neos-mcp-client/compare/2.1.0...2.2.0) (2026-10-12)
+
+
+### Features
+
+* document link property values for the write tools ([#4](https://github.com/UpAssist/neos-mcp-client/issues/4)) ([c775e8f](https://github.com/UpAssist/neos-mcp-client/commit/c775e8f314c20b60923f8779ac3acf1e00bf7d48))
+
 ## [2.1.0](https://github.com/UpAssist/neos-mcp-client/compare/2.0.2...2.1.0) (2026-10-08)
 
 
