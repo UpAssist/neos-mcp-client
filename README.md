@@ -13,6 +13,8 @@ This is the client-side component. It runs locally on your machine and translate
 
 > **v2 auto-detects** the bridge API version. A single MCP server v2 works with both Neos 8 and Neos 9 bridges.
 
+> **Multi-site** (`neos_list_sites` and the `site` parameter) needs a bridge with multi-site support (see the [bridge README](https://github.com/UpAssist/neos-mcp#multi-site), Neos 9). Older bridges ignore `site` and always work on the default site; `neos_list_sites` fails with a 404 there.
+
 > **`neos_upload_asset`** (client 2.1+) needs a bridge with the `uploadAsset` endpoint: upassist/neos-mcp **2.1+** (Neos 9) or **1.1+** (Neos 8). Against an older bridge the other tools keep working and the upload call fails with a 404.
 
 ## Requirements
@@ -127,6 +129,7 @@ Once connected, your AI assistant can use these tools:
 
 | Tool | Description |
 | --- | --- |
+| `neos_list_sites` | List all sites of the Neos instance and which one is the default |
 | `neos_get_site_context` | Get site structure, node types, and page tree. **Call this first.** |
 | `neos_list_pages` | List all pages in a workspace |
 | `neos_get_page_content` | Get all content nodes on a specific page |
@@ -182,6 +185,16 @@ Optional: `filename` (overrides the name taken from the path or URL), `title`, `
 | `neos_get_preview_url` | Generate a 24-hour preview link (no Neos login needed) |
 | `neos_list_pending_changes` | See what has been changed |
 | `neos_publish_changes` | Publish all changes to live |
+
+### Multi-site
+
+A Neos instance can host several sites. Without further input the tools work on the instance's default site. `neos_list_sites` shows all sites; pass a site node name as `site` to:
+
+- `neos_get_site_context` and `neos_list_pages`: context and page tree of that site,
+- `neos_list_pending_changes`: only the changes of that site (without `site`, each change shows its site),
+- `neos_publish_changes`: publish only that site's changes. **Without `site`, the changes of all sites go live.**
+
+Tools that work by node id (page content, create, update, move, delete) reach nodes of every site; preview links use the domain of the page's own site. One token covers all sites of an instance.
 
 ### Entity management
 

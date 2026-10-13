@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerGetSiteContext } from './tools/getSiteContext.js';
+import { registerListSites } from './tools/listSites.js';
 import { registerSetupWorkspace } from './tools/setupWorkspace.js';
 import { registerListPages } from './tools/listPages.js';
 import { registerGetPageContent } from './tools/getPageContent.js';
@@ -26,6 +27,7 @@ export function createServer(): McpServer {
   });
 
   registerGetSiteContext(server);
+  registerListSites(server);
   registerSetupWorkspace(server);
   registerListPages(server);
   registerGetPageContent(server);
