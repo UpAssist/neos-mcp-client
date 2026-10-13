@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/UpAssist/neos-mcp-client/compare/2.2.0...2.3.0) (2026-10-13)
+
+
+### Features
+
+* add multi-site support to the tools ([#5](https://github.com/UpAssist/neos-mcp-client/issues/5)) ([dbffad3](https://github.com/UpAssist/neos-mcp-client/commit/dbffad3106b39f1f4ba21603e7adc078ca99892e))
+
+
+### Bug Fixes
+
+* refuse site-scoped publish when the bridge has no multi-site support ([0076e8d](https://github.com/UpAssist/neos-mcp-client/commit/0076e8deed841fe912c7aa22c97869378b8de8cb))
+
 ## [2.2.0](https://github.com/UpAssist/neos-mcp-client/compare/2.1.0...2.2.0) (2026-10-12)
 
 
