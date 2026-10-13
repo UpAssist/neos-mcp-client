@@ -12,6 +12,20 @@ export function registerPublishChanges(server: McpServer): void {
       site: z.string().optional().describe('Only publish changes of this site (site node name, see neos_list_sites). Without it, all pending changes of all sites are published.'),
     },
     async ({ workspace, site }) => {
+      if (site) {
+        // A bridge without multi-site support ignores "site" and would publish the changes of
+        // all sites. Publishing cannot be undone, so only go ahead when the bridge knows sites.
+        try {
+          await callBridge('listSites', 'GET');
+        } catch (error) {
+          const reason = error instanceof Error ? error.message : String(error);
+          throw new Error(
+            `Not published: could not confirm that the bridge supports multi-site (${reason}). ` +
+            'A bridge without multi-site support would publish the changes of all sites. ' +
+            'Update the bridge (upassist/neos-mcp 2.3+ for Neos 9, 1.2+ for Neos 8) or publish without "site" if that is what you want.'
+          );
+        }
+      }
       const data = await callBridge('publishChanges', 'POST', { workspace, site });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }

@@ -83,8 +83,12 @@ test('neos_list_pages and neos_list_pending_changes pass "site" as query paramet
   assert.equal(changes.url.searchParams.get('site'), 'site');
 });
 
-test('neos_publish_changes sends "site" in the body, and no site without it', async () => {
-  const perSite = await call('neos_publish_changes', { site: 'azubi' });
+test('neos_publish_changes checks multi-site support, then sends "site" in the body, and no site without it', async () => {
+  const result = await client.callTool({ name: 'neos_publish_changes', arguments: { site: 'azubi' } });
+  assert.notEqual(result.isError, true);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].url.pathname, '/neos/mcp/listSites');
+  const perSite = calls[1];
   assert.equal(perSite.url.pathname, '/neos/mcp/publishChanges');
   assert.equal(perSite.method, 'POST');
   assert.deepEqual(perSite.body, { workspace: 'mcp', site: 'azubi' });
@@ -98,4 +102,15 @@ test('the publish tool warns that without "site" all sites go live', async () =>
   const { tools } = await client.listTools();
   const tool = tools.find((t) => t.name === 'neos_publish_changes');
   assert.match(tool?.description ?? '', /all sites/);
+});
+
+test('neos_publish_changes with "site" does not publish when the bridge has no multi-site support', async () => {
+  globalThis.fetch = (async (input: any, init: any = {}) => {
+    calls.push({ url: new URL(String(input)), method: init.method ?? 'GET', body: init.body ? JSON.parse(init.body) : undefined });
+    return new Response(JSON.stringify({ error: 'Not found' }), { status: 404, headers: { 'content-type': 'application/json' } });
+  }) as typeof fetch;
+
+  const result = await client.callTool({ name: 'neos_publish_changes', arguments: { site: 'azubi' } });
+  assert.equal(result.isError, true);
+  assert.deepEqual(calls.map((c) => c.url.pathname), ['/neos/mcp/listSites']);
 });
