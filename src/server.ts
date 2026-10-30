@@ -14,6 +14,7 @@ import { registerDeleteNode } from './tools/deleteNode.js';
 import { registerPublishChanges } from './tools/publishChanges.js';
 import { registerCreateDocumentNode } from './tools/createDocumentNode.js';
 import { registerMoveNode } from './tools/moveNode.js';
+import { registerCreateNodeVariant } from './tools/createNodeVariant.js';
 import { registerRestart } from './tools/restart.js';
 import { registerListAssets } from './tools/listAssets.js';
 import { registerListAssetTags } from './tools/listAssetTags.js';
@@ -41,6 +42,7 @@ export function createServer(): McpServer {
   registerPublishChanges(server);
   registerCreateDocumentNode(server);
   registerMoveNode(server);
+  registerCreateNodeVariant(server);
   registerRestart(server);
   registerListAssets(server);
   registerListAssetTags(server);

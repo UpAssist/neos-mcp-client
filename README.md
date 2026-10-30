@@ -15,6 +15,8 @@ This is the client-side component. It runs locally on your machine and translate
 
 > **Multi-site** (`neos_list_sites` and the `site` parameter) needs a bridge with multi-site support (see the [bridge README](https://github.com/UpAssist/neos-mcp#multi-site): upassist/neos-mcp **2.3+** for Neos 9, **1.2+** for Neos 8). Older bridges ignore `site` and always work on the default site; `neos_list_sites` fails with a 404 there. To avoid publishing every site by accident, `neos_publish_changes` with `site` first checks that the bridge supports multi-site and refuses to publish otherwise.
 
+> **Content dimensions** (the `dimensions` parameter and `neos_create_node_variant`) need a bridge with dimension support: upassist/neos-mcp **2.4+** for Neos 9, **1.3+** for Neos 8. With `dimensions` the client first checks that the bridge reports its dimensions and refuses otherwise, because an older bridge would silently use the default dimensions (and write there).
+
 > **`neos_upload_asset`** (client 2.1+) needs a bridge with the `uploadAsset` endpoint: upassist/neos-mcp **2.1+** (Neos 9) or **1.1+** (Neos 8). Against an older bridge the other tools keep working and the upload call fails with a 404.
 
 ## Requirements
@@ -146,6 +148,7 @@ Once connected, your AI assistant can use these tools:
 | `neos_create_document_node` | Create a new page |
 | `neos_move_node` | Move or reorder a node |
 | `neos_delete_node` | Remove a node |
+| `neos_create_node_variant` | Create a variant of a node in another content dimension (e.g. a translation), as a copy or empty |
 
 Property values are passed to the bridge unchanged and resolved there against the NodeType's property type:
 
@@ -195,6 +198,15 @@ A Neos instance can host several sites. Without further input the tools work on 
 - `neos_publish_changes`: publish only that site's changes. **Without `site`, the changes of all sites go live.**
 
 Tools that work by node id (page content, create, update, move, delete) reach nodes of every site; preview links use the domain of the page's own site. One token covers all sites of an instance.
+
+### Content dimensions
+
+A site can have content dimensions such as languages. `neos_get_site_context` lists them under `dimensions`, with the default value and the fallback chain of each value (for example `en_UK` shows `en_US`). Without further input the tools work in the default dimensions. Pass `dimensions`, for example `{"language": "nl"}`, to `neos_list_pages`, `neos_get_page_content`, `neos_get_document_properties` and to all writing tools to work in another dimension. Dimensions you leave out keep their default.
+
+- Nodes in the results show the `dimensions` they are stored in and `fallback: true` when they are only visible here through a dimension fallback.
+- A node that only exists in another dimension (shown through a fallback) cannot be changed or moved in the requested dimension: the bridge answers with a 409. Create a variant first with `neos_create_node_variant` (`mode: "copy"` starts from the source content, `mode: "empty"` without properties and content). The parent has to exist in the target dimension, so create variants top-down.
+- `neos_delete_node` with `dimensions` removes only the variant in those dimensions. On Neos 8 a node that is only shown through a fallback is refused; on Neos 9 it is removed from the requested dimension (and its specializations) and stays in the dimension it is stored in.
+- Not yet language aware: `neos_get_preview_url` and publishing. `neos_publish_changes` publishes all pending changes, in every dimension.
 
 ### Entity management
 

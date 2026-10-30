@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { callBridge, nodeIdParam } from '../bridge.js';
+import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 
 export function registerUpdateNodeProperty(server: McpServer): void {
   server.tool(
@@ -18,13 +19,15 @@ export function registerUpdateNodeProperty(server: McpServer): void {
         'A node:// target must exist in the workspace (check with neos_list_pages), otherwise the write is rejected.'
       ),
       workspace: z.string().default('mcp').describe('Workspace to write to'),
+      dimensions: dimensionsSchema('The property is changed in exactly these dimensions; a node that only exists in another dimension is refused, create a variant first with neos_create_node_variant.'),
     },
-    async ({ node_id, property, value, workspace }) => {
+    async ({ node_id, property, value, workspace, dimensions }) => {
       const data = await callBridge('updateNodeProperty', 'POST', {
         ...await nodeIdParam('contextPath', node_id),
         property,
         value,
         workspace,
+        ...await dimensionsParam(dimensions),
       });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }

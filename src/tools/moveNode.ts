@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { callBridge, nodeIdParam } from '../bridge.js';
+import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 
 export function registerMoveNode(server: McpServer): void {
   server.tool(
@@ -22,14 +23,16 @@ export function registerMoveNode(server: McpServer): void {
         'New parent node identifier — move into this parent (as last child)'
       ),
       workspace: z.string().default('mcp').describe('Draft workspace name'),
+      dimensions: dimensionsSchema(),
     },
-    async ({ node_id, insert_before, insert_after, new_parent_id, workspace }) => {
+    async ({ node_id, insert_before, insert_after, new_parent_id, workspace, dimensions }) => {
       const data = await callBridge('moveNode', 'POST', {
         ...await nodeIdParam('contextPath', node_id),
         ...await nodeIdParam('newParentPath', new_parent_id ?? ''),
         insertBefore: insert_before ?? '',
         insertAfter: insert_after ?? '',
         workspace,
+        ...await dimensionsParam(dimensions),
       });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }

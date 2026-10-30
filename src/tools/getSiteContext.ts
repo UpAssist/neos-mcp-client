@@ -6,7 +6,8 @@ export function registerGetSiteContext(server: McpServer): void {
   server.tool(
     'neos_get_site_context',
     'Get the site context: site name, available content NodeTypes with their properties, current page tree, and editorial workflow instructions. Always call this first at the start of any Neos content editing session. ' +
-      'On a multi-site instance "sites" lists all sites; pass "site" to get the context of another site than the default one.',
+      'On a multi-site instance "sites" lists all sites; pass "site" to get the context of another site than the default one. ' +
+      'The "dimensions" in the result list the content dimensions (e.g. languages) with their default and fallback chains; pass "dimensions" to the other tools to work in one of them.',
     {
       site: z.string().optional().describe('Site node name (see neos_list_sites). Defaults to the default site of the instance.'),
     },

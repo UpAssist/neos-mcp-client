@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { callBridge, nodeIdParam } from '../bridge.js';
+import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 
 export function registerGetPageContent(server: McpServer): void {
   server.tool(
@@ -9,9 +10,10 @@ export function registerGetPageContent(server: McpServer): void {
     {
       node_id: z.string().describe('Node identifier — use the nodeAggregateId (Neos 9) or path (Neos 8) from neos_get_site_context / neos_list_pages'),
       workspace: z.string().default('mcp').describe('Workspace name'),
+      dimensions: dimensionsSchema(),
     },
-    async ({ node_id, workspace }) => {
-      const data = await callBridge('getPageContent', 'GET', { ...await nodeIdParam('nodePath', node_id), workspace });
+    async ({ node_id, workspace, dimensions }) => {
+      const data = await callBridge('getPageContent', 'GET', { ...await nodeIdParam('nodePath', node_id), workspace, ...await dimensionsParam(dimensions) });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }
   );

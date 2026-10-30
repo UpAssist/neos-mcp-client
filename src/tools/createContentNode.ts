@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { callBridge, nodeIdParam } from '../bridge.js';
+import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 
 export function registerCreateContentNode(server: McpServer): void {
   server.tool(
@@ -18,13 +19,15 @@ export function registerCreateContentNode(server: McpServer): void {
         'Values are resolved like in neos_update_node_property (asset identifiers, link URIs or { href, … } objects).'
       ),
       workspace: z.string().default('mcp').describe('Draft workspace name'),
+      dimensions: dimensionsSchema('The content is created in these dimensions; the parent has to exist there.'),
     },
-    async ({ parent_id, node_type, properties, workspace }) => {
+    async ({ parent_id, node_type, properties, workspace, dimensions }) => {
       const data = await callBridge('createContentNode', 'POST', {
         ...await nodeIdParam('parentPath', parent_id),
         nodeType: node_type,
         properties,
         workspace,
+        ...await dimensionsParam(dimensions),
       });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }

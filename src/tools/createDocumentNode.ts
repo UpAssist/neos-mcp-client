@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { callBridge, nodeIdParam } from '../bridge.js';
+import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 
 export function registerCreateDocumentNode(server: McpServer): void {
   server.tool(
@@ -29,8 +30,9 @@ export function registerCreateDocumentNode(server: McpServer): void {
       insert_after: z.string().optional().describe(
         'Sibling node identifier — insert the new page after this sibling'
       ),
+      dimensions: dimensionsSchema('The page is created in these dimensions; the parent has to exist there.'),
     },
-    async ({ parent_id, node_type, properties, workspace, node_name, insert_before, insert_after }) => {
+    async ({ parent_id, node_type, properties, workspace, node_name, insert_before, insert_after, dimensions }) => {
       const data = await callBridge('createDocumentNode', 'POST', {
         ...await nodeIdParam('parentPath', parent_id),
         nodeType: node_type,
@@ -39,6 +41,7 @@ export function registerCreateDocumentNode(server: McpServer): void {
         nodeName: node_name ?? '',
         insertBefore: insert_before ?? '',
         insertAfter: insert_after ?? '',
+        ...await dimensionsParam(dimensions),
       });
       return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
     }
