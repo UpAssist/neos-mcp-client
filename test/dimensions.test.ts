@@ -156,3 +156,32 @@ test('the dimension tools describe how to work with variants', async () => {
   const del = tools.find((t) => t.name === 'neos_delete_node');
   assert.match(del?.description ?? '', /fallback/);
 });
+
+test('preview, pending changes and publishing pass "dimensions" and check bridge support first', async () => {
+  await client.callTool({ name: 'neos_get_preview_url', arguments: { node_id: 'abc', dimensions: { language: 'nl' } } });
+  const preview = calls.find((c) => c.url.pathname.endsWith('/getPreviewUrl'))!;
+  assert.deepEqual(JSON.parse(preview.url.searchParams.get('dimensions') ?? ''), { language: 'nl' });
+
+  calls = [];
+  await client.callTool({ name: 'neos_list_pending_changes', arguments: { dimensions: { language: 'nl' } } });
+  const pending = calls.find((c) => c.url.pathname.endsWith('/listPendingChanges'))!;
+  assert.deepEqual(JSON.parse(pending.url.searchParams.get('dimensions') ?? ''), { language: 'nl' });
+
+  calls = [];
+  await client.callTool({ name: 'neos_publish_changes', arguments: { dimensions: { language: 'nl' } } });
+  const publish = calls.find((c) => c.url.pathname.endsWith('/publishChanges'))!;
+  assert.equal(publish.method, 'POST');
+  assert.deepEqual(JSON.parse(publish.body.dimensions), { language: 'nl' });
+});
+
+test('publishing with "dimensions" is refused when the bridge has no dimension support', async () => {
+  bridgeHasDimensions = false;
+  const result = await client.callTool({ name: 'neos_publish_changes', arguments: { dimensions: { language: 'nl' } } });
+  assert.equal(result.isError, true);
+  assert.deepEqual(paths(), ['/neos/mcp/getSiteContext']);
+});
+
+test('publishing without "dimensions" sends none', async () => {
+  await client.callTool({ name: 'neos_publish_changes', arguments: {} });
+  assert.equal('dimensions' in calls[0].body, false);
+});

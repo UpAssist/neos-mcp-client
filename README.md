@@ -148,7 +148,7 @@ Once connected, your AI assistant can use these tools:
 | `neos_create_document_node` | Create a new page |
 | `neos_move_node` | Move or reorder a node |
 | `neos_delete_node` | Remove a node |
-| `neos_create_node_variant` | Create a variant of a node in another content dimension (e.g. a translation), as a copy or empty |
+| `neos_create_node_variant` | Create a variant of a node in another content dimension (e.g. a translation, when the dimension is a language), as a copy or empty |
 
 Property values are passed to the bridge unchanged and resolved there against the NodeType's property type:
 
@@ -201,12 +201,13 @@ Tools that work by node id (page content, create, update, move, delete) reach no
 
 ### Content dimensions
 
-A site can have content dimensions such as languages. `neos_get_site_context` lists them under `dimensions`, with the default value and the fallback chain of each value (for example `en_UK` shows `en_US`). Without further input the tools work in the default dimensions. Pass `dimensions`, for example `{"language": "nl"}`, to `neos_list_pages`, `neos_get_page_content`, `neos_get_document_properties` and to all writing tools to work in another dimension. Dimensions you leave out keep their default.
+A site can have content dimensions, such as a language or a country; several dimensions can be combined. `neos_get_site_context` lists them under `dimensions`, with the default value and the fallback chain of each value (for example `en_UK` shows `en_US`). Without further input the tools work in the default dimensions. Pass `dimensions`, for example `{"language": "nl"}`, to `neos_list_pages`, `neos_get_page_content`, `neos_get_document_properties` and to all writing tools to work in another dimension. Dimensions you leave out keep their default.
 
 - Nodes in the results show the `dimensions` they are stored in and `fallback: true` when they are only visible here through a dimension fallback.
 - A node that only exists in another dimension (shown through a fallback) cannot be changed or moved in the requested dimension: the bridge answers with a 409. Create a variant first with `neos_create_node_variant` (`mode: "copy"` starts from the source content, `mode: "empty"` without properties and content). The parent has to exist in the target dimension, so create variants top-down.
 - `neos_delete_node` with `dimensions` removes only the variant in those dimensions. On Neos 8 a node that is only shown through a fallback is refused; on Neos 9 it is removed from the requested dimension (and its specializations) and stays in the dimension it is stored in.
-- Not yet language aware: `neos_get_preview_url` and publishing. `neos_publish_changes` publishes all pending changes, in every dimension.
+- `neos_get_preview_url` with `dimensions` returns a link to the page in those dimensions, including the URL prefix the site uses for them.
+- `neos_list_pending_changes` shows the `dimensions` of each change and can be limited to some. `neos_publish_changes` without `dimensions` publishes the changes of all dimensions; with `dimensions` only the changes made in those. Neos 9 publishes whole nodes, so a node that also changed in another dimension is skipped and reported under `skippedNodes`; Neos 8 publishes the variants of the requested dimensions separately, so a new variant can go live before its counterpart in another dimension.
 
 ### Entity management
 

@@ -1,5 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import { callBridge, nodeIdParam } from '../bridge.js';
 import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 
@@ -7,7 +7,7 @@ export function registerDeleteNode(server: McpServer): void {
   server.tool(
     'neos_delete_node',
     'Mark a content node as removed in the mcp workspace. The deletion is staged and will only go live after neos_publish_changes is called. ' +
-    'With "dimensions" only the variant in those dimensions is removed, the other languages stay. ' +
+    'With "dimensions" only the variant in those dimensions is removed, the variants in other dimensions stay. ' +
     'Neos 8 refuses a node that is only shown through a fallback; Neos 9 then removes the page from the requested dimension (and its specializations) only, the page stays in the dimension it is stored in.',
     {
       node_id: z.string().describe('Node identifier — use nodeAggregateId (Neos 9) or contextPath/path (Neos 8)'),

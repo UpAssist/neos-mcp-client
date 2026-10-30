@@ -1,5 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import { callBridge } from '../bridge.js';
 
 export function registerEntityCrudTools(server: McpServer): void {

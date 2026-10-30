@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import { callBridge } from './bridge.js';
 
 const DIMENSIONS_HINT =
-  'Content dimensions as an object, e.g. {"language":"nl"} (see "dimensions" in neos_get_site_context for the available values). ' +
+  'Content dimensions as an object, e.g. {"language":"nl"} or {"language":"nl","country":"be"} (see "dimensions" in neos_get_site_context for the available values). ' +
   'Dimensions you leave out keep their default value; without this argument the default dimensions are used.';
 
 /**
