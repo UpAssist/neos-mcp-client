@@ -185,3 +185,26 @@ test('publishing without "dimensions" sends none', async () => {
   await client.callTool({ name: 'neos_publish_changes', arguments: {} });
   assert.equal('dimensions' in calls[0].body, false);
 });
+
+test('several dimensions are sent together, for reading and writing', async () => {
+  const dimensions = { language: 'nl', country: 'be' };
+
+  await client.callTool({ name: 'neos_list_pages', arguments: { dimensions } });
+  const list = calls.find((c) => c.url.pathname.endsWith('/listPages'))!;
+  assert.deepEqual(JSON.parse(list.url.searchParams.get('dimensions') ?? ''), dimensions);
+
+  calls = [];
+  await client.callTool({
+    name: 'neos_create_node_variant',
+    arguments: { node_id: 'abc', dimensions, source_dimensions: { language: 'en_US', country: 'nl' } },
+  });
+  const variant = calls.find((c) => c.url.pathname.endsWith('/createNodeVariant'))!;
+  assert.deepEqual(JSON.parse(variant.body.dimensions), dimensions);
+  assert.deepEqual(JSON.parse(variant.body.sourceDimensions), { language: 'en_US', country: 'nl' });
+});
+
+test('an empty "dimensions" object is treated as not given', async () => {
+  await client.callTool({ name: 'neos_list_pages', arguments: { dimensions: {} } });
+  assert.deepEqual(paths(), ['/neos/mcp/listPages']);
+  assert.equal(calls[0].url.searchParams.has('dimensions'), false);
+});
