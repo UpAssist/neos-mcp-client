@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/UpAssist/neos-mcp-client/compare/2.3.0...2.4.0) (2026-11-02)
+
+
+### Features
+
+* content dimensions for the node tools and neos_create_node_variant ([#10](https://github.com/UpAssist/neos-mcp-client/issues/10)) ([46f0553](https://github.com/UpAssist/neos-mcp-client/commit/46f0553142faa9579e041517905277901eff617a))
+* dimensions for preview, pending changes and publishing; fix typecheck ([#10](https://github.com/UpAssist/neos-mcp-client/issues/10)) ([d591f17](https://github.com/UpAssist/neos-mcp-client/commit/d591f17ac8d4859661ca70b97159e931b3100009))
+
 ## [2.3.0](https://github.com/UpAssist/neos-mcp-client/compare/2.2.0...2.3.0) (2026-10-13)
 
 
