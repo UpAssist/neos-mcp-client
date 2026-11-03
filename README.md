@@ -9,9 +9,9 @@ This is the client-side component. It runs locally on your machine and translate
 | MCP Server version | Bridge version         | Neos CMS | Node.js |
 |-------------------|------------------------|----------|---------|
 | 2.x (`main`)       | upassist/neos-mcp 1.x or 2.x | 8.3+ / 9.0+ | 18+     |
-| 1.x (`neos-8`)     | upassist/neos-mcp 1.x | 8.3+     | 18+     |
+| 1.x (`neos-8`, no longer maintained) | upassist/neos-mcp 1.x | 8.3+     | 18+     |
 
-> **v2 auto-detects** the bridge API version. A single MCP server v2 works with both Neos 8 and Neos 9 bridges.
+> **v2 auto-detects** the bridge API version. A single MCP server v2 works with both Neos 8 and Neos 9 bridges. **Use v2 for Neos 8 as well:** all new client features (`neos_upload_asset`, multi-site, content dimensions) only land in v2 and are not backported to 1.x. What each feature needs from the bridge is listed below.
 
 > **Multi-site** (`neos_list_sites` and the `site` parameter) needs a bridge with multi-site support (see the [bridge README](https://github.com/UpAssist/neos-mcp#multi-site): upassist/neos-mcp **2.3+** for Neos 9, **1.2+** for Neos 8). Older bridges ignore `site` and always work on the default site; `neos_list_sites` fails with a 404 there. To avoid publishing every site by accident, `neos_publish_changes` with `site` first checks that the bridge supports multi-site and refuses to publish otherwise.
 
