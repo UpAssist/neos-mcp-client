@@ -16,7 +16,7 @@ export function registerCreateContentNode(server: McpServer): void {
       ),
       properties: z.record(z.unknown()).default({}).describe(
         'Property key-value pairs to set on the new node. Use neos_list_node_types to see available properties. ' +
-        'Values are resolved like in neos_update_node_property (asset identifiers, link URIs or { href, … } objects).'
+        'Values are resolved like in neos_update_node_property (asset identifiers, link URIs or { href, … } objects, nodeAggregateIds for references).'
       ),
       workspace: z.string().default('mcp').describe('Draft workspace name'),
       dimensions: dimensionsSchema('The content is created in these dimensions; the parent has to exist there.'),

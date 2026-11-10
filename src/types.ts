@@ -12,6 +12,7 @@ export interface PageNode {
   hidden: boolean;
   depth: number;
   properties?: Record<string, unknown>;
+  references?: Record<string, string | string[] | null>;
 }
 
 export interface ContentNode {
@@ -22,6 +23,7 @@ export interface ContentNode {
   nodeType: string;
   name: string;
   properties: Record<string, unknown>;
+  references?: Record<string, string | string[] | null>;
 }
 
 export interface NodeTypeProperty {
@@ -30,11 +32,18 @@ export interface NodeTypeProperty {
   label: string;
 }
 
+export interface NodeTypeReference {
+  type: 'reference' | 'references';
+  label: string;
+  targetNodeTypes: string[] | null;
+}
+
 export interface NodeTypeSchema {
   name: string;
   isContent: boolean;
   isDocument: boolean;
   properties: Record<string, NodeTypeProperty>;
+  references?: Record<string, NodeTypeReference>;
 }
 
 export interface PendingChange {
