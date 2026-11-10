@@ -154,6 +154,7 @@ Property values are passed to the bridge unchanged and resolved there against th
 
 - Image/asset properties: the asset `identifier` (e.g. from `neos_list_assets` or `neos_upload_asset`).
 - Link properties (`Neos\Neos\Domain\Link\Link`, edited with the LinkEditor): a URI string such as `node://<nodeAggregateId>`, `asset://<id>` or `https://…`, or an object `{ "href": "…", "title": "…", "target": "_blank" }`. An empty string clears the link. A `node://` target must exist in the workspace, otherwise the bridge rejects the write. Needs a Neos 9 bridge with Link property support (see the [bridge README](https://github.com/UpAssist/neos-mcp#property-resolution)).
+- References (for example selected brands or a contact person): `neos_list_node_types` lists them per node type under `references` with `type`, `label` and `targetNodeTypes`, and the read tools show the current targets under `references`. Write a `nodeAggregateId` for a `reference` and an array of them for `references`; the array replaces the previous list, in that order. An empty value clears them, an unknown target is rejected. Showing references needs a bridge that returns them (UpAssist/neos-mcp#14); setting them works with every Neos 9 bridge since 2.3.0.
 
 ### Media
 

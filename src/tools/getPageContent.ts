@@ -6,7 +6,7 @@ import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 export function registerGetPageContent(server: McpServer): void {
   server.tool(
     'neos_get_page_content',
-    'Get all content nodes on a specific page with their properties. Call neos_get_site_context first if you have not already done so this session.',
+    'Get all content nodes on a specific page with their properties. Each node also lists its "references" (nodeAggregateIds of the referenced nodes, in the format neos_update_node_property accepts). Call neos_get_site_context first if you have not already done so this session.',
     {
       node_id: z.string().describe('Node identifier — use the nodeAggregateId (Neos 9) or path (Neos 8) from neos_get_site_context / neos_list_pages'),
       workspace: z.string().default('mcp').describe('Workspace name'),

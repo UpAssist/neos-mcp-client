@@ -5,7 +5,8 @@ import { callBridge } from '../bridge.js';
 export function registerListNodeTypes(server: McpServer): void {
   server.tool(
     'neos_list_node_types',
-    'List available content node types with their property schemas. Useful to know which types and properties are available before creating or updating nodes.',
+    'List available content node types with their property schemas. Useful to know which types and properties are available before creating or updating nodes. ' +
+      'References to other nodes (for example selected brands or a contact person) are listed separately under "references", each with "type" ("reference" for one node, "references" for several), "label" and "targetNodeTypes" (the node types that can be referenced).',
     {
       filter: z.enum(['content', 'document', 'all']).default('content').describe(
         '"content" for content elements, "document" for page types, "all" for everything'
