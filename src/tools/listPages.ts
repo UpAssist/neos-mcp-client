@@ -6,7 +6,7 @@ import { dimensionsSchema, dimensionsParam } from '../dimensions.js';
 export function registerListPages(server: McpServer): void {
   server.tool(
     'neos_list_pages',
-    'List all document nodes (pages) in the Neos CMS site as a flat tree with paths and titles.',
+    'List all document nodes (pages) in the Neos CMS site as a flat tree with paths and titles. Neos 9: each page also lists its "references" (nodeAggregateIds of the referenced nodes).',
     {
       workspace: z.string().default('mcp').describe('Workspace name. Use "live" for published content, "mcp" for staged changes.'),
       site: z.string().optional().describe('Site node name (see neos_list_sites). Defaults to the default site of the instance.'),
