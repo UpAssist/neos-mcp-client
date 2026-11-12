@@ -45,7 +45,7 @@ test('neos_update_node_property: a list of reference targets is sent as an array
   const targets = ['brand-1', 'brand-2', 'brand-3'];
   const result = await client.callTool({
     name: 'neos_update_node_property',
-    arguments: { node_id: 'n1', property: 'branditemReference', value: targets },
+    arguments: { node_id: 'n1', property: 'brandReferences', value: targets },
   });
   assert.notEqual(result.isError, true);
 
@@ -54,7 +54,7 @@ test('neos_update_node_property: a list of reference targets is sent as an array
 });
 
 test('neos_create_content_node: reference targets inside properties are sent unchanged', async () => {
-  const properties = { contactPersonReference: 'person-1', branditemReference: ['brand-1', 'brand-2'] };
+  const properties = { contactPersonReference: 'person-1', brandReferences: ['brand-1', 'brand-2'] };
   const result = await client.callTool({
     name: 'neos_create_content_node',
     arguments: { parent_id: 'p1', node_type: 'Vendor.Site:Content.BrandSelection', properties },
@@ -72,5 +72,14 @@ test('references are described on the tools that read and write them', async () 
   assert.match(value, /"references"/);
   assert.match(value, /targetNodeTypes/);
   assert.match(byName('neos_list_node_types')?.description ?? '', /targetNodeTypes/);
-  assert.match(byName('neos_get_page_content')?.description ?? '', /references/);
+  for (const name of ['neos_list_pages', 'neos_get_page_content', 'neos_get_document_properties', 'neos_get_site_context']) {
+    assert.match(byName(name)?.description ?? '', /"references"/, name);
+  }
+});
+
+test('the references block is described as Neos 9 only', async () => {
+  const { tools } = await client.listTools();
+  const value = (tools.find((t) => t.name === 'neos_update_node_property')?.inputSchema.properties as any)?.value?.description ?? '';
+  assert.match(value, /Neos 9/);
+  assert.match(tools.find((t) => t.name === 'neos_list_node_types')?.description ?? '', /Neos 8/);
 });
