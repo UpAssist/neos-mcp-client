@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/UpAssist/neos-mcp-client/compare/2.4.0...2.5.0) (2026-11-12)
+
+
+### Features
+
+* describe references in the tool descriptions ([2a0aedb](https://github.com/UpAssist/neos-mcp-client/commit/2a0aedbd3ad7503f0d62a9da27fbf06fa3f2f544)), closes [UpAssist/neos-mcp#14](https://github.com/UpAssist/neos-mcp/issues/14)
+
+
+### Bug Fixes
+
+* allow an empty list for references in the types ([af7ed4c](https://github.com/UpAssist/neos-mcp-client/commit/af7ed4c4c29538316ce3a7992a8017e37c901e51))
+* run the tests with a glob so npm test works on Node 22 and newer ([#8](https://github.com/UpAssist/neos-mcp-client/issues/8)) ([6a17c1c](https://github.com/UpAssist/neos-mcp-client/commit/6a17c1c89b7b7835397497e732f46feac3b6c91b)), closes [#7](https://github.com/UpAssist/neos-mcp-client/issues/7)
+
 ## [2.4.0](https://github.com/UpAssist/neos-mcp-client/compare/2.3.0...2.4.0) (2026-11-02)
 
 
