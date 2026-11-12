@@ -1,3 +1,5 @@
+export type NodeReferences = Record<string, string | string[] | null> | [];
+
 export interface PageNode {
   // v2 (Neos 9) primary identifier
   nodeAggregateId?: string;
@@ -12,7 +14,8 @@ export interface PageNode {
   hidden: boolean;
   depth: number;
   properties?: Record<string, unknown>;
-  references?: Record<string, string | string[] | null>;
+  /** Keyed by reference name; the bridge sends an empty list ([]) instead of {} when the node type has none. */
+  references?: NodeReferences;
 }
 
 export interface ContentNode {
@@ -23,7 +26,8 @@ export interface ContentNode {
   nodeType: string;
   name: string;
   properties: Record<string, unknown>;
-  references?: Record<string, string | string[] | null>;
+  /** Keyed by reference name; the bridge sends an empty list ([]) instead of {} when the node type has none. */
+  references?: NodeReferences;
 }
 
 export interface NodeTypeProperty {
@@ -43,7 +47,8 @@ export interface NodeTypeSchema {
   isContent: boolean;
   isDocument: boolean;
   properties: Record<string, NodeTypeProperty>;
-  references?: Record<string, NodeTypeReference>;
+  /** An empty list ([]) instead of {} when the node type has none. */
+  references?: Record<string, NodeTypeReference> | [];
 }
 
 export interface PendingChange {
