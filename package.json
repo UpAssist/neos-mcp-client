@@ -17,7 +17,7 @@
     "release:minor": "npx standard-version -t '' -r minor && npm publish --access public && git push --follow-tags",
     "release:major": "npx standard-version -t '' -r major && npm publish --access public && git push --follow-tags",
     "release": "yarn release:patch",
-    "test": "esbuild test/*.test.ts --bundle --platform=node --format=esm --target=node20 --outdir=.test-build --out-extension:.js=.mjs --packages=external && node --test .test-build/"
+    "test": "esbuild test/*.test.ts --bundle --platform=node --format=esm --target=node20 --outdir=.test-build --out-extension:.js=.mjs --packages=external && node --test .test-build/*.mjs"
   },
   "engines": {
     "node": ">=18.0.0"
