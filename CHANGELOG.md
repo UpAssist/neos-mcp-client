@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.1](https://github.com/UpAssist/neos-mcp-client/compare/2.5.0...2.5.1) (2026-11-20)
+
+
+### Dependencies
+
+* bump `@hono/node-server` to 2.1.11 and `zod` to 4.6.7, closes [#16](https://github.com/UpAssist/neos-mcp-client/issues/16) [#18](https://github.com/UpAssist/neos-mcp-client/issues/18). No behaviour change: the tool schemas are identical to 2.5.0.
+
 ## [2.5.0](https://github.com/UpAssist/neos-mcp-client/compare/2.4.0...2.5.0) (2026-11-12)
 
 
